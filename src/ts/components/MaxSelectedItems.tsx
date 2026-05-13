@@ -7,7 +7,6 @@ import { withMantine } from "../utils/withMantine";
 import React, { useState } from "react";
 import { DashComponentProps } from "../props";
 
-const MAX_DISPLAYED_VALUES = 2;
 const groceries = [
   "🍎 Apples",
   "🍌 Bananas",
@@ -17,14 +16,20 @@ const groceries = [
 ];
 
 
-const ITEMS_LIMIT = 2;
-
 type Props = DashComponentProps & {
-  mantine: any;
+  /**
+   * Maximum number of items that can be selected. Once the limit is reached, other options will be disabled until at least one selected option is removed.
+   */
+  maxItems: number;
+  /**
+   * Internal property used to pass Mantine components to the component.
+   */
+  mantine?: any;
 };
 
-export function MaxSelectedItems(props: Props) {
-  const { id, mantine } = props;
+// Component will be exported using the `withMantine` wrapper below.
+function MaxSelectedItems(props: Props) {
+  const { id, mantine, maxItems } = props;
 
   const {
     CheckIcon,
@@ -62,7 +67,7 @@ export function MaxSelectedItems(props: Props) {
       value={item}
       key={item}
       active={value.includes(item)}
-      disabled={value.length >= ITEMS_LIMIT && !value.includes(item)}
+      disabled={value.length >= props.maxItems && !value.includes(item)}
     >
       <Group gap="sm">
         {value.includes(item) ? <CheckIcon size={12} /> : null}
@@ -100,7 +105,7 @@ export function MaxSelectedItems(props: Props) {
 
       <Combobox.Dropdown>
         <Combobox.Header>
-          You can select up to 2 items, currently selected: {value.length}
+          You can select up to {props.maxItems} items, currently selected: {value.length}
         </Combobox.Header>
         <Combobox.Options>{options}</Combobox.Options>
       </Combobox.Dropdown>
@@ -108,4 +113,8 @@ export function MaxSelectedItems(props: Props) {
   );
 }
 
+/**
+ * A combobox that limits the max number of options that can be selected.
+ * Once the limit is reached, other options will be disabled until at least one selected option is removed.
+ */
 export default withMantine(MaxSelectedItems);

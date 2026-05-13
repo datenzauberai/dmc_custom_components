@@ -5,8 +5,6 @@ import { withMantine } from "../utils/withMantine";
 import React, { useState } from "react";
 import { DashComponentProps } from "../props";
 
-const MAX_DISPLAYED_VALUES = 2;
-
 const groceries = [
   "🍎 Apples",
   "🍌 Bananas",
@@ -16,14 +14,20 @@ const groceries = [
 ];
 
 
-const ITEMS_LIMIT = 2;
-
 type Props = DashComponentProps & {
-  mantine: any;
+  /**
+   * Maximum number of items that will be displayed. Once the limit is reached, options will be summarized in a single pill "+n more".
+   */
+  maxItems: number;
+  /**
+   * Internal property used to pass Mantine components to the component.
+   */
+  mantine?: any;
 };
 
-export function MaxDisplayedItems(props: Props) {
-  const { id, mantine } = props;
+// Component will be exported using the `withMantine` wrapper below.
+function MaxDisplayedItems(props: Props) {
+  const { id, mantine, maxItems } = props;
 
   const {
     CheckIcon,
@@ -53,7 +57,7 @@ export function MaxDisplayedItems(props: Props) {
   const values = value
     .slice(
       0,
-      MAX_DISPLAYED_VALUES === value.length ? MAX_DISPLAYED_VALUES : MAX_DISPLAYED_VALUES - 1
+      props.maxItems === value.length ? props.maxItems : props.maxItems - 1
     )
     .map((item) => (
       <Pill key={item} withRemoveButton onRemove={() => handleValueRemove(item)}>
@@ -78,8 +82,8 @@ export function MaxDisplayedItems(props: Props) {
             {value.length > 0 ? (
               <>
                 {values}
-                {value.length > MAX_DISPLAYED_VALUES && (
-                  <Pill>+{value.length - (MAX_DISPLAYED_VALUES - 1)} more</Pill>
+                {value.length > props.maxItems && (
+                  <Pill>+{value.length - (props.maxItems - 1)} more</Pill>
                 )}
               </>
             ) : (
@@ -109,4 +113,8 @@ export function MaxDisplayedItems(props: Props) {
   );
 }
 
+/**
+ * A combobox that limits the max number of options that can be displayed.
+ * Once the limit is reached, options will be summarized in a single pill "+n more".
+ */
 export default withMantine(MaxDisplayedItems);

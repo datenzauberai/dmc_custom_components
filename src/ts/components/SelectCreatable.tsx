@@ -17,10 +17,14 @@ const groceries = [
 
 
 type Props = DashComponentProps & {
-  mantine: any;
+  /**
+   * Internal property used to pass Mantine components to the component.
+   */
+  mantine?: any;
 };
 
-export function SelectCreatable(props: Props) {
+// Component will be exported using the `withMantine` wrapper below.
+function SelectCreatable(props: Props) {
   const { id, mantine } = props;
   const {
     Combobox,
@@ -95,4 +99,8 @@ export function SelectCreatable(props: Props) {
 }
 
 
+/**
+ * A combobox with an option to create new options.
+ * When the user types in the input, they can either select an existing option or create a new one by submitting the current search value.
+ */
 export default withMantine(SelectCreatable);
